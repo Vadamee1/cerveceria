@@ -80,7 +80,7 @@ export function DialogAcceptButton({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-900 transition hover:bg-gray-200 disabled:opacity-50"
+      className="cursor-pointer rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-900 transition hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50"
     >
       {children}
     </button>
@@ -100,7 +100,7 @@ export function DialogCancelButton({
       type={type}
       onClick={onClick ?? (() => setOpen(false))}
       disabled={disabled}
-      className="rounded-lg bg-red-500/10 px-4 py-2 text-sm font-medium text-red-400 transition hover:bg-red-500/20 disabled:opacity-50"
+      className="cursor-pointer rounded-lg bg-red-500/10 px-4 py-2 text-sm font-medium text-red-400 transition hover:bg-red-500/20 disabled:cursor-not-allowed disabled:opacity-50"
     >
       {children}
     </button>
