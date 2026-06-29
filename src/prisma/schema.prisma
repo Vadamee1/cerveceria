@@ -25,3 +25,22 @@ model User {
 
   @@map("users")
 }
+
+model Category {
+  id   String @id @default(uuid())
+  name String @unique
+  products Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id         String @id @default(uuid())
+  name       String @unique
+  price      Decimal @db.Decimal(10, 2)
+  stock      Int @default(0)
+  categoryId String @map("category_id")
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  @@map("products")
+}

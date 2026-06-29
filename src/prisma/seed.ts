@@ -7,7 +7,7 @@ async function main() {
     update: {},
     create: {
       id: "role-admin",
-      name: "Administrador",
+      name: "Admin",
     },
   });
 
@@ -16,7 +16,7 @@ async function main() {
     update: {},
     create: {
       id: "role-seller",
-      name: "Vendedor",
+      name: "Seller",
     },
   });
 
