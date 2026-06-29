@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createProduct } from "@/actions/products";
-import { ProductFormErrors, productSchema } from "@/lib/validations/products";
+import { ProductFormErrors, productSchema } from "@/lib/validations/product";
 
 type UseCreateProductFormProps = {
   categoryId: string;
@@ -18,6 +18,7 @@ export function useCreateProductForm({
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
   const [errors, setErrors] = useState<ProductFormErrors>({});
+  const [formError, setFormError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -26,11 +27,13 @@ export function useCreateProductForm({
     setPrice("");
     setStock("");
     setErrors({});
+    setFormError(null);
   }
 
   function handleSubmit() {
-    const result = productSchema.safeParse({ name, price, stock });
+    setFormError(null);
 
+    const result = productSchema.safeParse({ name, price, stock });
     if (!result.success) {
       const fieldErrors = result.error.flatten().fieldErrors;
       setErrors({
@@ -44,19 +47,25 @@ export function useCreateProductForm({
     setErrors({});
 
     startTransition(async () => {
-      try {
-        await createProduct(
-          categoryId,
-          result.data.name,
-          result.data.price,
-          result.data.stock,
-        );
-        resetForm();
-        onSuccess?.();
-        router.refresh();
-      } catch {
-        setErrors({ name: "Ocurrió un error al crear el producto" });
+      const response = await createProduct(
+        categoryId,
+        result.data.name,
+        result.data.price,
+        result.data.stock,
+      );
+
+      if (!response.success) {
+        if (response.field === "name") {
+          setErrors({ name: response.error });
+        } else {
+          setFormError(response.error);
+        }
+        return;
       }
+
+      resetForm();
+      onSuccess?.();
+      router.refresh();
     });
   }
 
@@ -68,6 +77,7 @@ export function useCreateProductForm({
     stock,
     setStock,
     errors,
+    formError,
     isPending,
     handleSubmit,
     resetForm,

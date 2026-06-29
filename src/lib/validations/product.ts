@@ -15,3 +15,10 @@ export type ProductFormValues = z.infer<typeof productSchema>;
 export type ProductFormErrors = Partial<
   Record<keyof ProductFormValues, string>
 >;
+
+export type ProductRow = {
+  id: string;
+  name: string;
+  price: number;
+  stock: number;
+};

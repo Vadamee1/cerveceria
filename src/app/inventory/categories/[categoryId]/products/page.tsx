@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProductsByCategory } from "@/actions/products";
-import { CreateProductDialog } from "@/components/app/inventory/create-product-dialog";
+import { CreateProductDialog } from "@/components/app/inventory/products/create-product-dialog";
+import { EditProductDialog } from "@/components/app/inventory/products/edit-product-dialog";
+import { DeleteProductDialog } from "@/components/app/inventory/products/delete-product-dialog";
 
 type PageProps = {
   params: Promise<{ categoryId: string }>;
@@ -11,9 +13,7 @@ export default async function ProductsPage({ params }: PageProps) {
   const { categoryId } = await params;
   const data = await getProductsByCategory(categoryId);
 
-  if (!data) {
-    notFound();
-  }
+  if (!data) notFound();
 
   const { category, products } = data;
 
@@ -43,9 +43,27 @@ export default async function ProductsPage({ params }: PageProps) {
                 key={product.id}
                 className="rounded-2xl border border-white bg-black p-6 shadow-xl"
               >
-                <h2 className="text-lg font-semibold text-white">
-                  {product.name}
-                </h2>
+                <div className="flex items-start justify-between">
+                  <h2 className="text-lg font-semibold text-white">
+                    {product.name}
+                  </h2>
+
+                  <div className="flex items-center gap-1">
+                    <EditProductDialog
+                      product={{
+                        id: product.id,
+                        name: product.name,
+                        price: Number(product.price),
+                        stock: product.stock,
+                      }}
+                    />
+                    <DeleteProductDialog
+                      productId={product.id}
+                      productName={product.name}
+                    />
+                  </div>
+                </div>
+
                 <p className="mt-2 text-sm text-gray-400">
                   ${Number(product.price).toFixed(2)} · Stock: {product.stock}
                 </p>

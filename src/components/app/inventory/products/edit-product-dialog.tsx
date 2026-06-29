@@ -1,22 +1,24 @@
 "use client";
 
+import { useState } from "react";
 import {
   Dialog,
-  DialogAcceptButton,
-  DialogCancelButton,
+  DialogTitle,
   DialogContent,
   DialogFooter,
-  DialogTitle,
+  DialogAcceptButton,
+  DialogCancelButton,
 } from "@/components/shared/dialog";
 import { Input } from "@/components/shared/text-input";
-import { useCreateProductForm } from "@/hooks/app/use-create-product-form";
-import { useState } from "react";
+import { useEditProductForm } from "@/hooks/app/products/use-edit-product-form";
+import { type ProductRow } from "@/lib/validations/product";
+import { Pencil } from "lucide-react";
 
-type CreateProductDialogProps = {
-  categoryId: string;
+type EditProductDialogProps = {
+  product: ProductRow;
 };
 
-export function CreateProductDialog({ categoryId }: CreateProductDialogProps) {
+export function EditProductDialog({ product }: EditProductDialogProps) {
   const [open, setOpen] = useState(false);
 
   const {
@@ -27,11 +29,12 @@ export function CreateProductDialog({ categoryId }: CreateProductDialogProps) {
     stock,
     setStock,
     errors,
+    formError,
     isPending,
     handleSubmit,
     resetForm,
-  } = useCreateProductForm({
-    categoryId,
+  } = useEditProductForm({
+    product,
     onSuccess: () => setOpen(false),
   });
 
@@ -40,9 +43,10 @@ export function CreateProductDialog({ categoryId }: CreateProductDialogProps) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="cursor-pointer rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-900 transition hover:bg-gray-200"
+        className="cursor-pointer rounded-lg p-2 text-gray-400 transition hover:bg-white/10 hover:text-white"
+        aria-label="Editar producto"
       >
-        Agregar producto
+        <Pencil size={16} />
       </button>
 
       <Dialog
@@ -52,49 +56,46 @@ export function CreateProductDialog({ categoryId }: CreateProductDialogProps) {
           if (!value) resetForm();
         }}
       >
-        <DialogTitle>Nuevo producto</DialogTitle>
+        <DialogTitle>Editar producto</DialogTitle>
 
         <DialogContent>
           <div className="flex flex-col gap-4">
             <Input
-              id="product-name"
+              id="edit-product-name"
               label="Nombre"
-              placeholder="Ej. IPA Artesanal"
               value={name}
               onChange={(e) => setName(e.target.value)}
               error={errors.name}
             />
-
             <Input
-              id="product-price"
+              id="edit-product-price"
               label="Precio"
               type="number"
               min="0"
               step="0.01"
-              placeholder="0.00"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
               error={errors.price}
             />
-
             <Input
-              id="product-stock"
+              id="edit-product-stock"
               label="Stock"
               type="number"
               min="0"
               step="1"
-              placeholder="0"
               value={stock}
               onChange={(e) => setStock(e.target.value)}
               error={errors.stock}
             />
+
+            {formError && <p className="text-sm text-red-400">{formError}</p>}
           </div>
         </DialogContent>
 
         <DialogFooter>
           <DialogCancelButton>Cancelar</DialogCancelButton>
           <DialogAcceptButton onClick={handleSubmit} disabled={isPending}>
-            {isPending ? "Guardando..." : "Aceptar"}
+            {isPending ? "Guardando..." : "Guardar"}
           </DialogAcceptButton>
         </DialogFooter>
       </Dialog>

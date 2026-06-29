@@ -9,16 +9,23 @@ import {
   DialogTitle,
 } from "@/components/shared/dialog";
 import { Input } from "@/components/shared/text-input";
-import { useCreateCategoryForm } from "@/hooks/app/use-create-category-form";
+import { useCreateCategoryForm } from "@/hooks/app/categories/use-create-category-form";
 import { useState } from "react";
 
 export function CreateCategoryDialog() {
   const [open, setOpen] = useState(false);
 
-  const { name, setName, errors, isPending, handleSubmit, resetForm } =
-    useCreateCategoryForm({
-      onSuccess: () => setOpen(false),
-    });
+  const {
+    name,
+    setName,
+    errors,
+    isPending,
+    handleSubmit,
+    resetForm,
+    formError,
+  } = useCreateCategoryForm({
+    onSuccess: () => setOpen(false),
+  });
 
   return (
     <>
@@ -48,6 +55,9 @@ export function CreateCategoryDialog() {
             onChange={(e) => setName(e.target.value)}
             error={errors.name}
           />
+          {formError && (
+            <p className="mt-2 text-sm text-red-400">{formError}</p>
+          )}
         </DialogContent>
 
         <DialogFooter>

@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { Category } from "@/types/category";
-import { CreateCategoryDialog } from "@/components/app/inventory/create-category-dialog";
 import { getCategories } from "@/actions/category";
+import { CreateCategoryDialog } from "@/components/app/inventory/categories/create-category-dialog";
+import { EditCategoryDialog } from "@/components/app/inventory/categories/edit-category-dialog";
+import { DeleteCategoryDialog } from "@/components/app/inventory/categories/delete-category-dialog";
 
 export default async function CategoriesPage() {
-  const categories: Category[] = await getCategories();
+  const categories = await getCategories();
 
   return (
     <div className="min-h-screen bg-black p-8">
@@ -21,19 +22,34 @@ export default async function CategoriesPage() {
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {categories.map((category) => (
-              <Link
+              <div
                 key={category.id}
-                href={`/inventory/categories/${category.id}/products`}
-                className="rounded-2xl border border-white bg-black p-6 shadow-xl transition hover:bg-white/5 hover:shadow-2xl"
+                className="rounded-2xl border border-white bg-black p-6 shadow-xl"
               >
-                <h2 className="text-lg font-semibold text-white">
-                  {category.name}
-                </h2>
-                <p className="mt-2 text-sm text-gray-400">
-                  {category.productCount}{" "}
-                  {category.productCount === 1 ? "producto" : "productos"}
-                </p>
-              </Link>
+                <div className="flex items-start justify-between">
+                  <Link
+                    href={`/inventory/categories/${category.id}/products`}
+                    className="flex-1"
+                  >
+                    <h2 className="text-lg font-semibold text-white transition hover:text-gray-300">
+                      {category.name}
+                    </h2>
+                    <p className="mt-2 text-sm text-gray-400">
+                      {category.productCount}{" "}
+                      {category.productCount === 1 ? "producto" : "productos"}
+                    </p>
+                  </Link>
+
+                  <div className="flex items-center gap-1">
+                    <EditCategoryDialog category={category} />
+                    <DeleteCategoryDialog
+                      categoryId={category.id}
+                      categoryName={category.name}
+                      productCount={category.productCount}
+                    />
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         )}

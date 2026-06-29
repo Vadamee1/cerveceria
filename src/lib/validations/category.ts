@@ -8,3 +8,9 @@ export type CategoryFormValues = z.infer<typeof categorySchema>;
 export type CategoryFormErrors = Partial<
   Record<keyof CategoryFormValues, string>
 >;
+
+export type CategoryRow = {
+  id: string;
+  name: string;
+  productCount: number;
+};

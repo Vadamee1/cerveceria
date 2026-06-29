@@ -17,36 +17,43 @@ export function useCreateCategoryForm({
 }: UseCreateCategoryFormProps = {}) {
   const [name, setName] = useState("");
   const [errors, setErrors] = useState<CategoryFormErrors>({});
+  const [formError, setFormError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   function resetForm() {
     setName("");
     setErrors({});
+    setFormError(null);
   }
 
   function handleSubmit() {
-    const result = categorySchema.safeParse({ name });
+    setFormError(null);
 
+    const result = categorySchema.safeParse({ name });
     if (!result.success) {
       const fieldErrors = result.error.flatten().fieldErrors;
-      setErrors({
-        name: fieldErrors.name?.[0],
-      });
+      setErrors({ name: fieldErrors.name?.[0] });
       return;
     }
 
     setErrors({});
 
     startTransition(async () => {
-      try {
-        await createCategory(result.data.name);
-        resetForm();
-        onSuccess?.();
-        router.refresh();
-      } catch {
-        setErrors({ name: "Ocurrió un error al crear la categoría" });
+      const response = await createCategory(result.data.name);
+
+      if (!response.success) {
+        if (response.field === "name") {
+          setErrors({ name: response.error });
+        } else {
+          setFormError(response.error);
+        }
+        return;
       }
+
+      resetForm();
+      onSuccess?.();
+      router.refresh();
     });
   }
 
@@ -54,6 +61,7 @@ export function useCreateCategoryForm({
     name,
     setName,
     errors,
+    formError,
     isPending,
     handleSubmit,
     resetForm,
