@@ -22,7 +22,15 @@ export async function getProductsByCategory(categoryId: string) {
     orderBy: { name: "asc" },
   });
 
-  return { category, products };
+  return {
+    category,
+    products: products.map((p) => ({
+      id: p.id,
+      name: p.name,
+      price: Number(p.price),
+      stock: p.stock,
+    })),
+  };
 }
 
 export async function createProduct(

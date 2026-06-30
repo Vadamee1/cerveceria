@@ -53,7 +53,7 @@ export default async function ProductsPage({ params }: PageProps) {
                       product={{
                         id: product.id,
                         name: product.name,
-                        price: Number(product.price),
+                        price: product.price,
                         stock: product.stock,
                       }}
                     />
@@ -65,7 +65,7 @@ export default async function ProductsPage({ params }: PageProps) {
                 </div>
 
                 <p className="mt-2 text-sm text-gray-400">
-                  ${Number(product.price).toFixed(2)} · Stock: {product.stock}
+                  ${product.price.toFixed(2)} · Stock: {product.stock}
                 </p>
               </div>
             ))}

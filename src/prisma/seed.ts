@@ -23,7 +23,7 @@ async function main() {
   const hashedPassword = await bcrypt.hash("genesisrojo", 10);
 
   await prisma.user.upsert({
-    where: { username: "admin" },
+    where: { username: "Genesis" },
     update: {},
     create: {
       username: "Genesis",
@@ -31,6 +31,24 @@ async function main() {
       roleId: adminRole.id,
       isActive: true,
     },
+  });
+
+  await prisma.paymentType.upsert({
+    where: { name: "Efectivo" },
+    update: {},
+    create: { name: "Efectivo" },
+  });
+
+  await prisma.paymentType.upsert({
+    where: { name: "Transferencia" },
+    update: {},
+    create: { name: "Transferencia" },
+  });
+
+  await prisma.paymentType.upsert({
+    where: { name: "Tarjeta" },
+    update: {},
+    create: { name: "Tarjeta" },
   });
 }
 
