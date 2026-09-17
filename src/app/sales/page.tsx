@@ -8,5 +8,9 @@ export default async function SalesPage() {
     getPaymentTypeOptions(),
   ]);
 
-  return <SalesView categories={categories} paymentOptions={paymentOptions} />;
+  return (
+    <div className="px-48">
+      <SalesView categories={categories} paymentOptions={paymentOptions} />
+    </div>
+  );
 }

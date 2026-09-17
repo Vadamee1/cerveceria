@@ -107,7 +107,7 @@ export function SaleTicket({
 
       {error && <p className="mt-3 shrink-0 text-sm text-red-400">{error}</p>}
 
-      <div className="mt-4 flex shrink-0 gap-3">
+      <div className="mt-4 flex shrink-0 gap-3 pb-18 md:pb-0">
         <button
           type="button"
           onClick={onPay}
