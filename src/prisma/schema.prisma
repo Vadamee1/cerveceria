@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -10,4 +5,76 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+model Role {
+  id    String @id @default(uuid())
+  name  String
+  users User[]
+
+  @@map("roles")
+}
+
+model User {
+  id       String  @id @default(uuid())
+  username String  @unique
+  password String
+  roleId   String  @map("role_id")
+  role     Role    @relation(fields: [roleId], references: [id])
+  isActive Boolean @default(true) @map("is_active")
+  sales Sale[]
+
+  @@map("users")
+}
+
+model Category {
+  id   String @id @default(uuid())
+  name String @unique
+  products Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id         String @id @default(uuid())
+  name       String @unique
+  price      Decimal @db.Decimal(10, 2)
+  stock      Int @default(0)
+  categoryId String @map("category_id")
+  category   Category @relation(fields: [categoryId], references: [id])
+  sales ProductSale[]
+
+  @@map("products")
+}
+
+model PaymentType {
+  id    String @id @default(uuid())
+  name  String @unique
+  sales Sale[]
+
+  @@map("payments_type")
+}
+
+model Sale {
+  id            String      @id @default(uuid())
+  userId        String      @map("user_id")
+  paymentTypeId String      @map("payment_type_id")
+  date          DateTime    @default(now())
+  amount        Decimal     @db.Decimal(10, 2)
+  user          User        @relation(fields: [userId], references: [id])
+  paymentType   PaymentType @relation(fields: [paymentTypeId], references: [id])
+  products      ProductSale[]
+
+  @@map("sales")
+}
+
+model ProductSale {
+  id        String  @id @default(uuid())
+  productId String  @map("product_id")
+  saleId    String  @map("sale_id")
+  quantity  Int
+  product   Product @relation(fields: [productId], references: [id])
+  sale      Sale    @relation(fields: [saleId], references: [id])
+
+  @@map("products_sales")
 }

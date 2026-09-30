@@ -1,0 +1,62 @@
+import { prisma } from "@/lib/prisma";
+import bcrypt from "bcryptjs";
+
+async function main() {
+  const adminRole = await prisma.role.upsert({
+    where: { id: "role-admin" },
+    update: {},
+    create: {
+      id: "role-admin",
+      name: "Admin",
+    },
+  });
+
+  await prisma.role.upsert({
+    where: { id: "role-seller" },
+    update: {},
+    create: {
+      id: "role-seller",
+      name: "Seller",
+    },
+  });
+
+  const hashedPassword = await bcrypt.hash("genesisrojo", 10);
+
+  await prisma.user.upsert({
+    where: { username: "Genesis" },
+    update: {},
+    create: {
+      username: "Genesis",
+      password: hashedPassword,
+      roleId: adminRole.id,
+      isActive: true,
+    },
+  });
+
+  await prisma.paymentType.upsert({
+    where: { name: "Efectivo" },
+    update: {},
+    create: { name: "Efectivo" },
+  });
+
+  await prisma.paymentType.upsert({
+    where: { name: "Transferencia" },
+    update: {},
+    create: { name: "Transferencia" },
+  });
+
+  await prisma.paymentType.upsert({
+    where: { name: "Tarjeta" },
+    update: {},
+    create: { name: "Tarjeta" },
+  });
+}
+
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
